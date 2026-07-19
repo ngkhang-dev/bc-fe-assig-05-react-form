@@ -2,3 +2,7 @@
 @import "flowbite/src/themes/default";
 @plugin "flowbite/plugin";
 @source "../node_modules/flowbite";
+
+.btn {
+  @apply box-border border border-transparent focus:ring-4 shadow-xs font-medium leading-5 rounded-md text-sm px-2 py-1.5 focus:outline-none cursor-pointer;
+}
