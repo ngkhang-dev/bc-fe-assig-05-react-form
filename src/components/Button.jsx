@@ -1,8 +1,19 @@
 const Button = (props) => {
-  const { type = "button", className, onClick, children } = props;
+  const {
+    type = "button",
+    className = "",
+    onClick,
+    children,
+    disabled = false,
+  } = props;
 
   return (
-    <button type={type} className={`btn ${className}`} onClick={onClick}>
+    <button
+      type={type}
+      className={`btn ${className}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {children}
     </button>
   );
