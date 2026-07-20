@@ -49,8 +49,16 @@ const initialErrors = {
   soDienThoai: "",
 };
 
-const validateField = (name, value) => {
+const validateField = (name, value, { mode, listStudents } = {}) => {
   if (!value || value.trim() === "") return "Vui lòng không bỏ trống";
+
+  const studentExisting = listStudents?.some(
+    (student) => student.maSV === value.trim(),
+  );
+
+  if (name === "maSV" && mode === "add" && studentExisting) {
+    return "Mã SV đã tồn tại";
+  }
 
   if (name === "email" && !/^\S+@\S+\.\S+$/.test(value)) {
     return "Email không hợp lệ";
@@ -63,10 +71,10 @@ const validateField = (name, value) => {
   return "";
 };
 
-const validateAll = (data) => {
+const validateAll = (data, context) => {
   const nextErrors = {};
   Object.keys(initialData).forEach((name) => {
-    nextErrors[name] = validateField(name, data[name]);
+    nextErrors[name] = validateField(name, data[name], context);
   });
   return nextErrors;
 };
@@ -74,7 +82,9 @@ const validateAll = (data) => {
 const Form = () => {
   const dispatch = useDispatch();
 
-  const { studentEdit, mode } = useSelector((state) => state.studentReducer);
+  const { studentEdit, mode, listStudents } = useSelector(
+    (state) => state.studentReducer,
+  );
 
   const [userInfo, setUserInfo] = useState(initialData);
   const [errors, setErrors] = useState(initialErrors);
@@ -89,7 +99,7 @@ const Form = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const nextErrors = validateAll(userInfo);
+    const nextErrors = validateAll(userInfo, { mode, listStudents });
     setErrors(nextErrors);
 
     const hasError = Object.values(nextErrors).some((err) => err);
@@ -112,7 +122,7 @@ const Form = () => {
 
     setErrors((prev) => ({
       ...prev,
-      [name]: validateField(name, value),
+      [name]: validateField(name, value, { mode, listStudents }),
     }));
   };
 
@@ -121,7 +131,7 @@ const Form = () => {
 
     setErrors((prev) => ({
       ...prev,
-      [name]: validateField(name, value),
+      [name]: validateField(name, value, { mode, listStudents }),
     }));
   };
 

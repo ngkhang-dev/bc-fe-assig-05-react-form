@@ -17,7 +17,7 @@ const initialState = {
   ],
   studentEdit: null,
   mode: "add",
-  searchStudents: null,
+  searchKeyword: "",
 };
 
 const studentSlice = createSlice({
@@ -26,6 +26,7 @@ const studentSlice = createSlice({
   reducers: {
     addStudent: (state, { payload }) => {
       state.listStudents = [...state.listStudents, payload];
+      state.searchKeyword = "";
     },
     delStudent: (state, { payload }) => {
       state.listStudents = state.listStudents.filter(
@@ -49,16 +50,7 @@ const studentSlice = createSlice({
       state.mode = "add";
     },
     searchByKeyword: (state, { payload }) => {
-      const keyword = payload.trim().toLowerCase();
-      console.log(keyword);
-      state.searchStudents = state.listStudents.filter((student) => {
-        return (
-          student.email.toLowerCase().includes(keyword) ||
-          student.hoTen.toLowerCase().includes(keyword) ||
-          student.soDienThoai.includes(keyword) ||
-          student.maSV.toLowerCase().includes(keyword)
-        );
-      });
+      state.searchKeyword = payload.trim().toLowerCase();
     },
   },
 });
@@ -70,4 +62,5 @@ export const {
   updateStudent,
   searchByKeyword,
 } = studentSlice.actions;
+
 export const studentReducer = studentSlice.reducer;

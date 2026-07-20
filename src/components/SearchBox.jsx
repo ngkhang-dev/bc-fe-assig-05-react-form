@@ -10,13 +10,24 @@ const SearchBox = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(keyword);
+    setKeyword("");
     dispatch(searchByKeyword(keyword));
   };
 
   const handleOnChange = (e) => {
     const value = e.target.value;
-    setKeyword(value);
+
+    if (!value || !value.trim()) {
+      dispatch(searchByKeyword(value));
+      setKeyword("");
+    } else setKeyword(value);
+  };
+
+  const handleEnter = (e) => {
+    if (e.code === "Enter" || e.key === 13) {
+      handleSubmit(e);
+      setKeyword("");
+    }
   };
 
   return (
@@ -28,7 +39,7 @@ const SearchBox = () => {
         Search
       </label>
       <div className="relative">
-        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+        <div className="absolute inset-y-0 inset-s-0 flex items-center ps-3 pointer-events-none">
           <svg
             className="w-4 h-4 text-body"
             aria-hidden="true"
@@ -52,7 +63,10 @@ const SearchBox = () => {
           name="search"
           className="block w-full p-3 ps-9 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body"
           placeholder="Search..."
+          value={keyword}
           onChange={(e) => handleOnChange(e)}
+          onBlur={(e) => handleOnChange(e)}
+          onKeyDown={(e) => handleEnter(e)}
         />
 
         <Button

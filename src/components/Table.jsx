@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import Button from "./Button";
 import { useDispatch } from "react-redux";
 import { delStudent, editStudent } from "../store/slice";
+import { useMemo } from "react";
 
 const theads = [
   {
@@ -27,12 +28,24 @@ const theads = [
 ];
 
 const Table = () => {
-  const { listStudents, searchStudents } = useSelector(
+  const dispatch = useDispatch();
+  const { listStudents, searchKeyword } = useSelector(
     (state) => state.studentReducer,
   );
-  const displayList = searchStudents ?? listStudents;
 
-  const dispatch = useDispatch();
+  const displayList = useMemo(() => {
+    const keyword = searchKeyword.trim().toLowerCase();
+    if (!keyword) return listStudents;
+
+    return listStudents.filter((student) => {
+      return (
+        student.email.toLowerCase().includes(keyword) ||
+        student.hoTen.toLowerCase().includes(keyword) ||
+        student.soDienThoai.includes(keyword) ||
+        student.maSV.toLowerCase().includes(keyword)
+      );
+    });
+  }, [listStudents, searchKeyword]);
 
   const handleDel = (maSV) => {
     dispatch(delStudent(maSV));
@@ -46,7 +59,7 @@ const Table = () => {
     <>
       {displayList.length === 0 ? (
         <p>
-          {searchStudents !== null
+          {searchKeyword.trim()
             ? "Không tìm thấy sinh viên phù hợp"
             : "Danh sách trống"}
         </p>
@@ -70,7 +83,7 @@ const Table = () => {
             </thead>
 
             <tbody>
-              {listStudents?.map((student) => {
+              {displayList.map((student) => {
                 return (
                   <tr
                     key={student.maSV}
